@@ -30,43 +30,39 @@ const LoginScreen = ({navigation}) => {
 //   const [furnitureBegin, setFurnitureBegin] = useState('Начать');
 
   const Login = navigation => async () => {
-    AuthAPI.login(login, password).then(data => {
-      switch (data.resultCode) {
-        case 0:
-          AuthAPI.me(data.accessToken).then(data => {
-            let userName = data.user.full_name
-            switch (data.resultCode) {
-              case 0:
-                InventoryDataAPI.getInventoryData().then(data => {
-                  navigation.navigate('StartInventory', {
-                    userName: userName,
-                    locations: data.locations,
-                    itBeginHelper: !data.resultCodeIt ? 'Начать' : 'Продолжить',
-                    furnitureBeginHelper: !data.resultCodeFurniture
-                      ? 'Начать'
-                      : 'Продолжить',
-                  });
-                });
-                // Alert.alert(data.message);
-                break;
-              case 1:
-                // Alert.alert(data.message);
-                break;
-              default:
-                break;
-            }
-          });
-          break;
-        case 1:
-          Alert.alert(data.message);
-          break;
-        case 2:
-          Alert.alert(data.message);
-          break;
-        default:
-          break;
-      }
-    });
+    const loginData = await AuthAPI.login(login, password);
+    switch (loginData.resultCode) {
+      case 0:
+        const meData = await AuthAPI.me(loginData.accessToken)
+        // let userName = meData.user.full_name
+        switch (meData.resultCode) {
+          case 0:
+            const inventoryData = await InventoryDataAPI.getInventoryData(meData.user.division);
+            navigation.navigate('StartInventory', {
+              user: meData.user,
+              inventoryData,
+              // locations: inventoryData.locations,
+              // itBeginHelper: !data.resultsIt ? 'Начать' : 'Продолжить',
+              // furnitureBeginHelper: !data.resultsFurniture ? 'Начать' : 'Продолжить',
+            });
+            // Alert.alert(meData.message);
+            break;
+          case 1:
+            // Alert.alert(meData.message);
+            break;
+          default:
+            break;
+        }
+        break;
+      case 1:
+        Alert.alert(loginData.message);
+        break;
+      case 2:
+        Alert.alert(loginData.message);
+        break;
+      default:
+        break;
+    }
   };
 
   return (

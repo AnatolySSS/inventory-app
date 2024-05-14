@@ -3,157 +3,215 @@ import { StyleSheet, View, Alert, SafeAreaView, ScrollView, StatusBar } from 're
 import { Button, Text, Card } from '@rneui/base';
 import { Dimensions } from 'react-native'
 import { InventoryDataAPI } from '../../api/api';
-import { Dialog, Input, Header } from '@rneui/themed';
+import { Dialog } from '@rneui/themed';
 import { Select, CheckIcon } from "native-base";
 
 const StartInventoryScreen = ({navigation, route}) => {
-  const {userName, itBeginHelper, furnitureBeginHelper, locations} = route.params;
+  const { user, inventoryData } = route.params;
 
-  const [itBegin, setItBegin] = useState(itBeginHelper);
-  const [furnitureBegin, setFurnitureBegin] = useState(furnitureBeginHelper);
+  const {
+    resultCodeIt,
+    resultCodeFurniture,
+    resultCodeUnmarked,
+    resultCodeAssets,
+  } = inventoryData;
 
   const [dialogVisible, setDialogVisible] = useState(false);
-  const [dialogType, setDialogType] = useState('');
+  // const [dialogType, setDialogType] = useState('');
   const [currentTable, setCurrentTable] = useState('');
   const [roomNumber, setRoomNumber] = useState(0);
+  const [locations, setLocations] = useState([]);
 
   const toggleDialog = () => {
     setDialogVisible(!dialogVisible);
   };
 
-  const beginInventary = tableName => {
-    InventoryDataAPI.beginInventary(tableName).then(data => {
-      switch (data.tableName) {
-        case 'it':
-          setItBegin('Продолжить');
-          break;
-        case 'furniture':
-          setFurnitureBegin('Продолжить');
-          break;
-        default:
-          break;
-      }
-      navigation.navigate('Scanner', {
-        userName,
-        tableName,
-        itBeginHelper,
-        furnitureBeginHelper,
-        roomNumber,
-        locations,
-      });
+  const startScanning = tableName => {
+    navigation.navigate('Scanner', {
+      user,
+      inventoryData,
+      tableName,
+      roomNumber,
     });
   };
 
-  const checkRemains = roomNumber => {
-    InventoryDataAPI.checkRemains(roomNumber).then(data => {
-      navigation.navigate('Remains', {
-        roomNumber,
-        data,
-      });
-    })
-  }
+  // const checkRemains = roomNumber => {
+  //   InventoryDataAPI.checkRemains(roomNumber).then(data => {
+  //     navigation.navigate('Remains', {
+  //       roomNumber,
+  //       data,
+  //     });
+  //   })
+  // }
 
   const checkQRCode = () => {
     navigation.navigate('Checker', {
-      userName,
-      itBeginHelper,
-      furnitureBeginHelper,
-      locations,
+      user,
     });
   }
 
-  const getLocations = () => {
-    InventoryDataAPI.getLocations().then(data => {
+  const getLocations = async (currentTable, userDivision) => {
+    const data = await InventoryDataAPI.getLocations(currentTable, userDivision);
+    setLocations(data.locations);
+    
+    if (currentTable == "unmarked") {
+      //TODO: Разработать формат инвентаризации немаркируемых мат ценностей
+    } else {
+      if (data.locations.length == 0) {
+        startScanning(currentTable);
+      } else {
+        setRoomNumber(0);
+        setCurrentTable(currentTable);
+        // setDialogType("inv");
+        toggleDialog();
+      }
+    }
+  }
 
-      navigation.navigate('Locations', {
-        locations: data.locations,
-        checked_it: data.checked_it,
-        checked_furniture: data.checked_furniture,
-        it_count: data.it_count,
-        furniture_count: data.furniture_count,
-      });
-    })
+  const checkStatus = async () => {
+    const data = await InventoryDataAPI.checkStatusType(user.division);
+
+    navigation.navigate('StatusType', {
+      user: user,
+      checked_it: data.checked_it,
+      checked_furniture: data.checked_furniture,
+      checked_unmarked: data.checked_unmarked,
+      checked_assets: data.checked_assets,
+      it_count: data.it_count,
+      furniture_count: data.furniture_count,
+      unmarked_count: data.unmarked_count,
+      assets_count: data.assets_count,
+    });
   }
 
   return (
     <SafeAreaView style={styles.container}>
       <ScrollView>
-        <Card>
-          <View style={styles.card}>
-            {/* <Card.Title>Оборудование</Card.Title> */}
-            {/* <Card.Divider /> */}
-            <Card.Image
-              style={{padding: 0, marginBottom: 10}}
-              source={require('./../../assets/it_rus.png')}
-            />
-            <Card.Divider />
+        {resultCodeIt && (
+          <Card>
+            <View style={styles.card}>
+              <Card.Image
+                style={{ padding: 0, marginBottom: 10 }}
+                source={require("./../../assets/it_rus.png")}
+              />
+              {/* <Card.Divider />
             <Text
               style={{marginTop: -5, marginBottom: 10, textAlign: 'center'}}>
-              {itBegin} инвентаризацию оборудования
+              Продолжить инвентаризацию оборудования
             </Text>
-            <Card.Divider />
-            <Button
-              buttonStyle={{
-                borderRadius: 5,
-                marginLeft: 0,
-                marginRight: 0,
-                marginBottom: 0,
-              }}
-              title={itBegin.toUpperCase()}
-              onPress={() => {
-                setRoomNumber(0);
-                setCurrentTable('it');
-                setDialogType('inv')
-                toggleDialog();
-              }}
-            />
-          </View>
-        </Card>
-        <Card>
-          <View style={styles.card}>
-            {/* <Card.Title>Мебель</Card.Title> */}
-            {/* <Card.Divider /> */}
-            <Card.Image
-              style={{padding: 0, marginBottom: 10}}
-              source={require('./../../assets/furniture_rus.png')}
-            />
-            <Card.Divider />
+            <Card.Divider /> */}
+              <Button
+                buttonStyle={{
+                  borderRadius: 5,
+                  marginLeft: 0,
+                  marginRight: 0,
+                  marginBottom: 0,
+                }}
+                title="СТАРТ"
+                onPress={() => {
+                  getLocations("it", user.division);
+                }}
+              />
+            </View>
+          </Card>
+        )}
+        {resultCodeFurniture && (
+          <Card>
+            <View style={styles.card}>
+              <Card.Image
+                style={{ padding: 0, marginBottom: 10 }}
+                source={require("./../../assets/furniture_rus.png")}
+              />
+              {/* <Card.Divider />
             <Text
               style={{marginTop: -5, marginBottom: 10, textAlign: 'center'}}>
-              {furnitureBegin} инвентаризацию Мебели
+              Продолжить инвентаризацию Мебели
             </Text>
-            <Card.Divider />
-            <Button
-              buttonStyle={{
-                borderRadius: 5,
-                marginLeft: 0,
-                marginRight: 0,
-                marginBottom: 0,
-              }}
-              title={furnitureBegin.toUpperCase()}
-              onPress={() => {
-                setRoomNumber(0);
-                setCurrentTable('furniture');
-                setDialogType('inv')
-                toggleDialog();
-              }}
-            />
-          </View>
-        </Card>
+            <Card.Divider /> */}
+              <Button
+                buttonStyle={{
+                  borderRadius: 5,
+                  marginLeft: 0,
+                  marginRight: 0,
+                  marginBottom: 0,
+                }}
+                title="СТАРТ"
+                onPress={() => {
+                  getLocations("furniture", user.division);
+                }}
+              />
+            </View>
+          </Card>
+        )}
+        {resultCodeUnmarked && (
+          <Card>
+            <View style={styles.card}>
+              <Card.Image
+                style={{ padding: 0, marginBottom: 10 }}
+                source={require("./../../assets/unmarked_rus.png")}
+              />
+              {/* <Card.Divider />
+            <Text
+              style={{marginTop: -5, marginBottom: 10, textAlign: 'center'}}>
+              Продолжить инвентаризацию Мебели
+            </Text> */}
+              {/* <Card.Divider /> */}
+              <Button
+                buttonStyle={{
+                  borderRadius: 5,
+                  marginLeft: 0,
+                  marginRight: 0,
+                  marginBottom: 0,
+                }}
+                title="СТАРТ"
+                onPress={() => {
+                  getLocations("unmarked", user.division);
+                }}
+              />
+            </View>
+          </Card>
+        )}
+        {resultCodeAssets && (
+          <Card>
+            <View style={styles.card}>
+              <Card.Image
+                style={{ padding: 0, marginBottom: 10 }}
+                source={require("./../../assets/furniture_rus.png")}
+              />
+              <Card.Divider />
+              <Text
+                style={{ marginTop: -5, marginBottom: 10, textAlign: "center" }}
+              >
+                Продолжить инвентаризацию основных средств
+              </Text>
+              <Card.Divider />
+              <Button
+                buttonStyle={{
+                  borderRadius: 5,
+                  marginLeft: 0,
+                  marginRight: 0,
+                  marginBottom: 0,
+                }}
+                title="СТАРТ"
+                onPress={() => {
+                  getLocations("assets", user.division);
+                }}
+              />
+            </View>
+          </Card>
+        )}
         <Card>
           <View style={styles.card}>
-            {/* <Card.Title>Проверить QR-code</Card.Title> */}
-            {/* <Card.Divider /> */}
             <Card.Image
               style={{padding: 0, marginBottom: 10}}
               source={require('./../../assets/remain.png')}
             />
-            <Card.Divider />
+            {/* <Card.Divider />
             <Text
               style={{marginTop: -5, marginBottom: 10, textAlign: 'center'}}>
               Текущий статус инвентаризации
             </Text>
-            <Card.Divider />
+            <Card.Divider /> */}
             <Button
               buttonStyle={{
                 borderRadius: 5,
@@ -162,21 +220,19 @@ const StartInventoryScreen = ({navigation, route}) => {
                 marginBottom: 0,
                 backgroundColor: 'rgba(127, 220, 103, 1)',
               }}
-              title="ПРОВЕРИТЬ"
+              title="СТАРТ"
               onPress={() => {
                 setRoomNumber(0);
                 // setDialogType('remains')
                 // setDialogType('locations')
-                getLocations()
+                checkStatus();
                 // toggleDialog();
               }}
             />
           </View>
         </Card>
-        <Card>
+        {/* <Card>
           <View style={styles.card}>
-            {/* <Card.Title>Проверить QR-code</Card.Title> */}
-            {/* <Card.Divider /> */}
             <Card.Image
               style={{padding: 0, marginBottom: 10}}
               source={require('./../../assets/check_rus.png')}
@@ -201,7 +257,7 @@ const StartInventoryScreen = ({navigation, route}) => {
               }}
             />
           </View>
-        </Card>
+        </Card> */}
         <Dialog isVisible={dialogVisible} onBackdropPress={toggleDialog}>
           <Dialog.Title title="Номер кабинета" />
           <Select
@@ -210,34 +266,38 @@ const StartInventoryScreen = ({navigation, route}) => {
             accessibilityLabel="Введите № кабинета"
             placeholder="Введите № кабинета"
             _selectedItem={{
-              bg: 'teal.600',
+              bg: "teal.600",
               endIcon: <CheckIcon size="5" />,
             }}
             mt={1}
-            onValueChange={value => setRoomNumber(value)}>
-              {locations.map(location => <Select.Item key={location} label={location} value={location} />)}
+            onValueChange={(value) => setRoomNumber(value)}
+          >
+            {locations.map((location) => (
+              <Select.Item key={location} label={location} value={location} />
+            ))}
           </Select>
           <Dialog.Actions>
             <Dialog.Button
               title="ОК"
               onPress={() => {
                 if (roomNumber == 0) {
-                  Alert.alert('Введите № кабинета');
+                  Alert.alert("Введите № кабинета");
                 } else {
-                  switch (dialogType) {
-                    case 'inv':
-                      beginInventary(currentTable);
-                      break;
-                    case 'remains':
-                      checkRemains(roomNumber)
-                      break;
-                    case 'locations':
-                      getLocations()
-                      break;
-                  
-                    default:
-                      break;
-                  }
+                  startScanning(currentTable);
+                  // switch (dialogType) {
+                  //   case "inv":
+                  //     startScanning(currentTable);
+                  //     break;
+                  //   case "remains":
+                  //     checkRemains(roomNumber);
+                  //     break;
+                  //   case "locations":
+                  //     getLocations();
+                  //     break;
+
+                  //   default:
+                  //     break;
+                  // }
                 }
               }}
             />
@@ -255,26 +315,26 @@ const StartInventoryScreen = ({navigation, route}) => {
   );
 }
 
-  const styles = StyleSheet.create({
-    container: {
-      flex: 1,
-      justifyContent: 'center',
-      alignItems: 'center',
-      backgroundColor: 'F5FCFF',
-      paddingTop: StatusBar.currentHeight,
-    },
-    input: {
-      fontSize: 20,
-      color: 'white'
-    },
-    card: {
-      width: (Dimensions.get('window').width * 0.8)
-    },
-    heading: {
-      color: 'white',
-      fontSize: 22,
-      fontWeight: 'bold',
-    },
-  })
+const styles = StyleSheet.create({
+  container: {
+    flex: 1,
+    justifyContent: 'center',
+    alignItems: 'center',
+    backgroundColor: 'F5FCFF',
+    paddingTop: StatusBar.currentHeight,
+  },
+  input: {
+    fontSize: 20,
+    color: 'white'
+  },
+  card: {
+    width: (Dimensions.get('window').width * 0.8)
+  },
+  heading: {
+    color: 'white',
+    fontSize: 22,
+    fontWeight: 'bold',
+  },
+})
 
   export default StartInventoryScreen;

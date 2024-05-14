@@ -6,24 +6,24 @@ import QRCodeScanner from 'react-native-qrcode-scanner';
 import {RNCamera} from 'react-native-camera';
 
 const ScannerScreen = ({navigation, route}) => {
-  const {userName, tableName, itBeginHelper, furnitureBeginHelper, roomNumber, locations} = route.params;
+  const {user, inventoryData, tableName, roomNumber} = route.params;
+  console.log(user, inventoryData, tableName, roomNumber);
+
   let scanner = useRef(null);
 
-  onSuccess = e => {
-    InventoryDataAPI.findQRCode(userName, tableName, roomNumber, e.data).then(data => {
-      Alert.alert('QR-CODE распознан', data.message, [{
-        text: 'OK', onPress: () => 
-        Alert.alert('Продолжить инвентаризацию?', '', [
-          {text: 'Продолжить', onPress: () => scanner.reactivate()},
-          {
-            text: 'Завершить',
-            onPress: () => navigation.navigate('StartInventory', { userName, itBeginHelper, furnitureBeginHelper, locations }),
-            style: 'cancel',
-          },
-        ])
-      }])
-    })
-    
+  onSuccess = async e => {
+    const data = await InventoryDataAPI.findQRCode(user, tableName, roomNumber, e.data);
+    Alert.alert('QR-CODE распознан', data.message, [{
+      text: 'OK', onPress: () => 
+      Alert.alert('Продолжить инвентаризацию?', '', [
+        {text: 'Продолжить', onPress: () => scanner.reactivate()},
+        {
+          text: 'Завершить',
+          onPress: () => navigation.navigate('StartInventory', { user, inventoryData }),
+          style: 'cancel',
+        },
+      ])
+    }]);
   };
 
   return (
@@ -34,7 +34,7 @@ const ScannerScreen = ({navigation, route}) => {
       checkAndroid6Permissions={true}
       flashMode={RNCamera.Constants.FlashMode.off}
       topContent={
-        <Text style={styles.centerText}>
+        roomNumber != 0 && <Text style={styles.centerText}>
           КАБИНЕТ № <Text style={styles.textBold}> {roomNumber}</Text>
         </Text>
       }

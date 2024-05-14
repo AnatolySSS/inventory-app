@@ -6,7 +6,7 @@ import QRCodeScanner from 'react-native-qrcode-scanner';
 import {RNCamera} from 'react-native-camera';
 
 const CheckerScreen = ({navigation, route}) => {
-  const {userName, itBeginHelper, furnitureBeginHelper, locations} = route.params;
+  const {userName, itBeginHelper, furnitureBeginHelper} = route.params;
   let scanner = useRef(null);
 
   onSuccess = e => {
@@ -50,7 +50,7 @@ const CheckerScreen = ({navigation, route}) => {
             {text: 'Следующий', onPress: () => scanner.reactivate()},
             {
               text: 'Всё, хватит',
-              onPress: () => navigation.navigate('StartInventory', { userName, itBeginHelper, furnitureBeginHelper, locations }),
+              onPress: () => navigation.navigate('StartInventory', { userName, itBeginHelper, furnitureBeginHelper }),
               style: 'cancel',
             },
           ])

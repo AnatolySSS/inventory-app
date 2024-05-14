@@ -1,7 +1,7 @@
 import axios from "axios";
 
 const URL_WORK = 'http://10.205.24.14:3005/'
-const URL_HOME = 'http://192.168.0.20:3005/'
+const URL_HOME = 'http://192.168.0.19:3005/'
 const URL_TEST = 'https://nice-cases-grab.loca.lt/'
 
 const instance = axios.create({
@@ -25,9 +25,9 @@ export const AuthAPI = {
 }
 
 export const InventoryDataAPI = {
-  async getInventoryData() {
+  async getInventoryData(userDivision) {
     const responce = await instance
-      .get(`currentYearInventary`);
+      .post(`currentYearInventary`, { userDivision });
     return responce.data;
   },
   async beginInventary(tableName) {
@@ -35,9 +35,9 @@ export const InventoryDataAPI = {
       .post(`beginInventary`, { tableName });
     return responce.data;
   },
-  async findQRCode(userName, tableName, roomNumber, qrCode) {
+  async findQRCode(user, tableName, roomNumber, qrCode) {
     const responce = await instance
-      .post(`findQRCode`, { userName, tableName, roomNumber, qrCode });
+      .post(`findQRCode`, { user, tableName, roomNumber, qrCode });
     return responce.data;
   },
   async checkQRCode(qrCode) {
@@ -45,14 +45,34 @@ export const InventoryDataAPI = {
       .post(`checkQRCode`, { qrCode });
     return responce.data;
   },
-  async checkRemains(roomNumber) {
+  async checkRemainsWithLocations(currentTable, userDivision, location) {
     const responce = await instance
-      .post(`checkRemains`, { roomNumber });
+      .post(`checkRemainsWithLocations`, { currentTable, userDivision, location });
     return responce.data;
   },
-  async getLocations() {
+  async checkRemainsWithoutLocations(currentTable, userDivision) {
     const responce = await instance
-      .get(`getLocations`);
+      .post(`checkRemainsWithoutLocations`, { currentTable, userDivision });
+    return responce.data;
+  },
+  async checkStatus(userDivision) {
+    const responce = await instance
+      .post(`checkStatus`, { userDivision });
+    return responce.data;
+  },
+  async checkStatusType(userDivision) {
+    const responce = await instance
+      .post(`checkStatusType`, { userDivision });
+    return responce.data;
+  },
+  async checkStatusLocations(currentTable, userDivision) {
+    const responce = await instance
+      .post(`checkStatusLocations`, { currentTable, userDivision });
+    return responce.data;
+  },
+  async getLocations(currentTable, userDivision) {
+    const responce = await instance
+      .post(`getLocations`, { currentTable, userDivision });
     return responce.data;
   },
 }

@@ -8,7 +8,8 @@ import StartInventoryScreen from './Components/StartInventory/StartInventoryScre
 import ScannerScreen from './Components/ScannerScreen';
 import CheckerScreen from './Components/CheckerScreen';
 import RemainsScreen from './Components/RemainsScreen';
-import LocationsScreen from './Components/LocationsScreen';
+import StatusTypeScreen from './Components/StatusTypeScreen';
+import StatusLocationsScreen from './Components/StatusLocationsScreen';
 
 const Stack = createNativeStackNavigator();
 
@@ -55,13 +56,19 @@ const App = () => {
           name="Remains"
           component={RemainsScreen}
           styles={styles}
-          options={{title: 'Текущий статус инвентаризации'}}
+          options={{title: 'Статус инвентаризации'}}
         />
         <Stack.Screen
-          name="Locations"
-          component={LocationsScreen}
+          name="StatusType"
+          component={StatusTypeScreen}
           styles={styles}
-          options={{title: 'Текущий статус инвентаризации'}}
+          options={{title: 'Статус инвентаризации'}}
+        />
+        <Stack.Screen
+          name="StatusLocations"
+          component={StatusLocationsScreen}
+          styles={styles}
+          options={{title: 'Статус инвентаризации'}}
         />
       </Stack.Navigator>
     </NavigationContainer>
@@ -80,7 +87,7 @@ const styles = StyleSheet.create({
     color: 'white'
   },
   card: {
-    width: (Dimensions.get('window').width * 0.8)
+    width: (Dimensions.get('window').width * 0.8),
   }
 })
 
