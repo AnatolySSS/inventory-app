@@ -6,57 +6,56 @@ import QRCodeScanner from 'react-native-qrcode-scanner';
 import {RNCamera} from 'react-native-camera';
 
 const CheckerScreen = ({navigation, route}) => {
-  const {userName, itBeginHelper, furnitureBeginHelper} = route.params;
+  const {user, inventoryData} = route.params;
   let scanner = useRef(null);
 
-  onSuccess = e => {
-    InventoryDataAPI.checkQRCode(e.data).then(data => {
-      let name, qr_code, owner, location, inventary_number, serial, note
+  onSuccess = async e => {
+    const data = await InventoryDataAPI.checkQRCode(e.data, user.division);
+    let name, qr_code, owner, location, inventary_number, serial, note;
 
-      qr_code = `qr-code: ${data.object.qr_code}`
-      name = `\n\nИмя: ${data.object.name}`
-      
-      if (data.object.owner == "" || data.object.owner == null) {
-        owner = ""
-      } else {
-        owner = `\n\nВладелец: ${data.object.owner}`
-      }
-      if (data.object.location == "" || data.object.location == null) {
-        location = ""
-      } else {
-        location = `\n\nМесторасположение: ${data.object.location}`
-      }
-      if (data.object.inventary_number == "" || data.object.inventary_number == null) {
-        inventary_number = ""
-      } else {
-        inventary_number = `\n\nИнвентарный №: ${data.object.inventary_number}`
-      }
-      if (data.object.serial == "" || data.object.serial == null) {
-        serial = ""
-      } else {
-        serial = `\n\nСерийный №: ${data.object.serial}`
-      }
-      if (data.object.note == "" || data.object.note == null) {
-        note = ""
-      } else {
-        note = `\n\nИнформация: ${data.object.note}`
-      }
+    qr_code = `qr-code: ${data.object.qr_code}`
+    name = `\n\nИмя: ${data.object.name}`
+    
+    if (data.object.owner == "" || data.object.owner == null) {
+      owner = ""
+    } else {
+      owner = `\n\nВладелец: ${data.object.owner}`
+    }
+    if (data.object.location == "" || data.object.location == null) {
+      location = ""
+    } else {
+      location = `\n\nМесторасположение: ${data.object.location}`
+    }
+    if (data.object.inventary_number == "" || data.object.inventary_number == null) {
+      inventary_number = ""
+    } else {
+      inventary_number = `\n\nИнвентарный №: ${data.object.inventary_number}`
+    }
+    if (data.object.serial == "" || data.object.serial == null) {
+      serial = ""
+    } else {
+      serial = `\n\nСерийный №: ${data.object.serial}`
+    }
+    if (data.object.note == "" || data.object.note == null) {
+      note = ""
+    } else {
+      note = `\n\nИнформация: ${data.object.note}`
+    }
 
-      Alert.alert('QR-CODE распознан', `${qr_code}${name}${owner}${location}${inventary_number}${serial}${note}`, [
-        {
-          text: 'OK',
-          onPress: () =>
-          Alert.alert('Проверяем еще?', "Сколько хотите", [
-            {text: 'Следующий', onPress: () => scanner.reactivate()},
-            {
-              text: 'Всё, хватит',
-              onPress: () => navigation.navigate('StartInventory', { userName, itBeginHelper, furnitureBeginHelper }),
-              style: 'cancel',
-            },
-          ])
-        },
-      ]);
-    });
+    Alert.alert('QR-CODE распознан', `${qr_code}${name}${owner}${location}${inventary_number}${serial}${note}`, [
+      {
+        text: 'OK',
+        onPress: () =>
+        Alert.alert('Продолжить?', "", [
+          {text: 'ДА', onPress: () => scanner.reactivate()},
+          {
+            text: 'НЕТ',
+            onPress: () => navigation.navigate('StartInventory', { user, inventoryData }),
+            style: 'cancel',
+          },
+        ])
+      },
+    ]);
   };
 
   return (

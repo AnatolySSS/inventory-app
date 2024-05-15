@@ -40,9 +40,9 @@ export const InventoryDataAPI = {
       .post(`findQRCode`, { user, tableName, roomNumber, qrCode });
     return responce.data;
   },
-  async checkQRCode(qrCode) {
+  async checkQRCode(qrCode, userDivision) {
     const responce = await instance
-      .post(`checkQRCode`, { qrCode });
+      .post(`checkQRCode`, { qrCode, userDivision });
     return responce.data;
   },
   async checkRemainsWithLocations(currentTable, userDivision, location) {

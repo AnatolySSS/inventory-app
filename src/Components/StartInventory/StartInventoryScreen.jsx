@@ -35,18 +35,10 @@ const StartInventoryScreen = ({navigation, route}) => {
     });
   };
 
-  // const checkRemains = roomNumber => {
-  //   InventoryDataAPI.checkRemains(roomNumber).then(data => {
-  //     navigation.navigate('Remains', {
-  //       roomNumber,
-  //       data,
-  //     });
-  //   })
-  // }
-
   const checkQRCode = () => {
     navigation.navigate('Checker', {
       user,
+      inventoryData,
     });
   }
 
@@ -176,15 +168,15 @@ const StartInventoryScreen = ({navigation, route}) => {
             <View style={styles.card}>
               <Card.Image
                 style={{ padding: 0, marginBottom: 10 }}
-                source={require("./../../assets/furniture_rus.png")}
+                source={require("./../../assets/assets_rus.png")}
               />
-              <Card.Divider />
+              {/* <Card.Divider />
               <Text
                 style={{ marginTop: -5, marginBottom: 10, textAlign: "center" }}
               >
                 Продолжить инвентаризацию основных средств
               </Text>
-              <Card.Divider />
+              <Card.Divider /> */}
               <Button
                 buttonStyle={{
                   borderRadius: 5,
@@ -223,26 +215,23 @@ const StartInventoryScreen = ({navigation, route}) => {
               title="СТАРТ"
               onPress={() => {
                 setRoomNumber(0);
-                // setDialogType('remains')
-                // setDialogType('locations')
                 checkStatus();
-                // toggleDialog();
               }}
             />
           </View>
         </Card>
-        {/* <Card>
+        <Card>
           <View style={styles.card}>
             <Card.Image
               style={{padding: 0, marginBottom: 10}}
               source={require('./../../assets/check_rus.png')}
             />
-            <Card.Divider />
+            {/* <Card.Divider />
             <Text
               style={{marginTop: -5, marginBottom: 10, textAlign: 'center'}}>
               Проверить информацию об объекте
             </Text>
-            <Card.Divider />
+            <Card.Divider /> */}
             <Button
               buttonStyle={{
                 borderRadius: 5,
@@ -257,7 +246,7 @@ const StartInventoryScreen = ({navigation, route}) => {
               }}
             />
           </View>
-        </Card> */}
+        </Card>
         <Dialog isVisible={dialogVisible} onBackdropPress={toggleDialog}>
           <Dialog.Title title="Номер кабинета" />
           <Select
