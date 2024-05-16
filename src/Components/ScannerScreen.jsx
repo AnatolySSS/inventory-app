@@ -7,8 +7,6 @@ import {RNCamera} from 'react-native-camera';
 
 const ScannerScreen = ({navigation, route}) => {
   const {user, inventoryData, tableName, roomNumber} = route.params;
-  console.log(user, inventoryData, tableName, roomNumber);
-
   let scanner = useRef(null);
 
   onSuccess = async e => {

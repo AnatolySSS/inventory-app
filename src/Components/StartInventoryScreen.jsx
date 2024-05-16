@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 import { StyleSheet, View, Alert, SafeAreaView, ScrollView, StatusBar } from 'react-native';
 import { Button, Text, Card } from '@rneui/base';
 import { Dimensions } from 'react-native'
-import { InventoryDataAPI } from '../../api/api';
+import { InventoryDataAPI } from '../api/api';
 import { Dialog } from '@rneui/themed';
 import { Select, CheckIcon } from "native-base";
 
@@ -48,6 +48,32 @@ const StartInventoryScreen = ({navigation, route}) => {
     
     if (currentTable == "unmarked") {
       //TODO: Разработать формат инвентаризации немаркируемых мат ценностей
+      const data = await InventoryDataAPI.checkRemainsWithoutLocations(currentTable, user.division);
+      navigation.navigate('InventUnmarked', {
+        user,
+        name: data.name,
+        location: false,
+        sourceData: data.inv_data,
+      });
+      // if (data.locations.length == 0) {
+        
+      // } else {
+      //   const dataLocations = await InventoryDataAPI.checkStatusLocations(currentTable, user.division);
+      //   navigation.navigate('Remains', {
+      //     name: data.name,
+      //     location: false,
+      //     data: data.inv_data,
+      //   });
+      //   navigation.navigate('InventUnmarkedLocations', {
+      //     currentTable: currentTable,
+      //     user: user,
+      //     locations: dataLocations.locations,
+      //     locationsArray: data.locations,
+      //     name: dataLocations.name,
+      //     checked: dataLocations.checked,
+      //     count: dataLocations.count,
+      //   });
+      // }
     } else {
       if (data.locations.length == 0) {
         startScanning(currentTable);
@@ -84,7 +110,7 @@ const StartInventoryScreen = ({navigation, route}) => {
             <View style={styles.card}>
               <Card.Image
                 style={{ padding: 0, marginBottom: 10 }}
-                source={require("./../../assets/it_rus.png")}
+                source={require("./../assets/it_rus.png")}
               />
               {/* <Card.Divider />
             <Text
@@ -112,7 +138,7 @@ const StartInventoryScreen = ({navigation, route}) => {
             <View style={styles.card}>
               <Card.Image
                 style={{ padding: 0, marginBottom: 10 }}
-                source={require("./../../assets/furniture_rus.png")}
+                source={require("./../assets/furniture_rus.png")}
               />
               {/* <Card.Divider />
             <Text
@@ -140,7 +166,7 @@ const StartInventoryScreen = ({navigation, route}) => {
             <View style={styles.card}>
               <Card.Image
                 style={{ padding: 0, marginBottom: 10 }}
-                source={require("./../../assets/unmarked_rus.png")}
+                source={require("./../assets/unmarked_rus.png")}
               />
               {/* <Card.Divider />
             <Text
@@ -168,7 +194,7 @@ const StartInventoryScreen = ({navigation, route}) => {
             <View style={styles.card}>
               <Card.Image
                 style={{ padding: 0, marginBottom: 10 }}
-                source={require("./../../assets/assets_rus.png")}
+                source={require("./../assets/assets_rus.png")}
               />
               {/* <Card.Divider />
               <Text
@@ -196,7 +222,7 @@ const StartInventoryScreen = ({navigation, route}) => {
           <View style={styles.card}>
             <Card.Image
               style={{padding: 0, marginBottom: 10}}
-              source={require('./../../assets/remain.png')}
+              source={require('./../assets/remain.png')}
             />
             {/* <Card.Divider />
             <Text
@@ -224,7 +250,7 @@ const StartInventoryScreen = ({navigation, route}) => {
           <View style={styles.card}>
             <Card.Image
               style={{padding: 0, marginBottom: 10}}
-              source={require('./../../assets/check_rus.png')}
+              source={require('./../assets/check_rus.png')}
             />
             {/* <Card.Divider />
             <Text

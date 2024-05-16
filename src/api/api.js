@@ -1,12 +1,12 @@
 import axios from "axios";
 
-const URL_WORK = 'http://10.205.24.14:3005/'
+const URL_WORK = 'http://10.205.24.14:3010/'
 const URL_HOME = 'http://192.168.0.19:3005/'
 const URL_TEST = 'https://nice-cases-grab.loca.lt/'
 
 const instance = axios.create({
   withCredentials: true,
-  baseURL: URL_HOME,
+  baseURL: URL_WORK,
 });
 
 export const AuthAPI = {
@@ -38,6 +38,11 @@ export const InventoryDataAPI = {
   async findQRCode(user, tableName, roomNumber, qrCode) {
     const responce = await instance
       .post(`findQRCode`, { user, tableName, roomNumber, qrCode });
+    return responce.data;
+  },
+  async inventUnmarked(id, count, user) {
+    const responce = await instance
+      .post(`inventUnmarked`, { id, count, user });
     return responce.data;
   },
   async checkQRCode(qrCode, userDivision) {

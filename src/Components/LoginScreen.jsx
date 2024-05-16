@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 import { StyleSheet, View, Alert } from 'react-native';
 import { Button, Input, Switch } from '@rneui/base';  
 import { Dimensions } from 'react-native'
-import { AuthAPI, InventoryDataAPI } from '../../api/api';
+import { AuthAPI, InventoryDataAPI } from '../api/api';
 
 // const URL_WORK = 'http://10.205.24.14:3005/'
 // const URL_HOME = 'http://192.168.0.17:3005/'

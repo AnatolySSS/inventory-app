@@ -39,23 +39,27 @@ const RemainsScreen = ({navigation, route}) => {
         {data.map((item, index) => {
           return (
             <Card key={"RemainsScreen_" + index}>
-              <View style={styles.card + "color: green"}>
-                {item.qr_code && <Card.Title>{"QR-Code: " + item.qr_code}</Card.Title>}
+              <View style={styles.card}>
+                {item.qr_code && (
+                  <Card.Title>{"QR-Code: " + item.qr_code}</Card.Title>
+                )}
                 {item.qr_code && <Card.Divider />}
                 {/* <Card.Image
-                      style={{padding: 0, marginBottom: 10}}
-                      source={require('./../../assets/it_rus.png')}
-                    />
-                    <Card.Divider /> */}
-                {item.type && <Text
-                  style={{
-                    marginTop: -5,
-                    marginBottom: 10,
-                    textAlign: "center",
-                  }}
-                >
-                  {item.type}
-                </Text>}
+                  style={{ padding: 0, marginBottom: 10 }}
+                  source={require("./../assets/furniture/020002.png")}
+                />
+                <Card.Divider /> */}
+                {item.type && (
+                  <Text
+                    style={{
+                      marginTop: -5,
+                      marginBottom: 10,
+                      textAlign: "center",
+                    }}
+                  >
+                    {item.type}
+                  </Text>
+                )}
                 {item.type && <Card.Divider />}
                 <Text
                   style={{
@@ -67,16 +71,18 @@ const RemainsScreen = ({navigation, route}) => {
                   {item.name}
                 </Text>
                 {item.count && <Card.Divider />}
-                {item.count && <Text
-                  style={{
-                    marginTop: -5,
-                    marginBottom: 10,
-                    textAlign: "center",
-                    fontWeight: "bold",
-                  }}
-                >
-                  {`Количество: ${item.count}`}
-                </Text>}
+                {item.count && (
+                  <Text
+                    style={{
+                      marginTop: -5,
+                      marginBottom: 10,
+                      textAlign: "center",
+                      fontWeight: "bold",
+                    }}
+                  >
+                    {`Количество: ${item.count}`}
+                  </Text>
+                )}
                 <Text
                   style={{
                     paddingVertical: 3,
@@ -109,6 +115,7 @@ const styles = StyleSheet.create({
     },
     card: {
       width: (Dimensions.get('window').width * 0.8),
+      justifyContent: 'center',
     },
     heading: {
       color: 'white',

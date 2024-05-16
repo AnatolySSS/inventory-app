@@ -3,13 +3,15 @@ import { NavigationContainer, DarkTheme } from '@react-navigation/native';
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
 import { StyleSheet } from 'react-native';
 import { Dimensions } from 'react-native'
-import LoginScreen from './Components/Login/LoginScreen';
-import StartInventoryScreen from './Components/StartInventory/StartInventoryScreen';
+import LoginScreen from './Components/LoginScreen';
+import StartInventoryScreen from './Components/StartInventoryScreen';
 import ScannerScreen from './Components/ScannerScreen';
 import CheckerScreen from './Components/CheckerScreen';
 import RemainsScreen from './Components/RemainsScreen';
 import StatusTypeScreen from './Components/StatusTypeScreen';
 import StatusLocationsScreen from './Components/StatusLocationsScreen';
+// import InventUnmarkedLocationsScreen from './Components/InventUnmarkedLocationsScreen';
+import InventUnmarkedScreen from './Components/InventUnmarkedScreen';
 
 const Stack = createNativeStackNavigator();
 
@@ -45,6 +47,18 @@ const App = () => {
           component={ScannerScreen}
           styles={styles}
           options={{title: 'Найдите QR-CODE'}}
+        />
+        {/* <Stack.Screen
+          name="InventUnmarkedLocations"
+          component={InventUnmarkedLocationsScreen}
+          styles={styles}
+          options={{title: 'Выберите локацию'}}
+        /> */}
+        <Stack.Screen
+          name="InventUnmarked"
+          component={InventUnmarkedScreen}
+          styles={styles}
+          options={{title: 'Инвентаризация прочих ТМЦ'}}
         />
         <Stack.Screen
           name="Checker"

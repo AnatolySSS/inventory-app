@@ -49,14 +49,6 @@ const StatusTypeScreen = ({navigation, route}) => {
           count: data.count,
         });
       }
-
-      // InventoryDataAPI.checkRemains(roomNumber).then(data => {
-      //   navigation.navigate('Remains', {
-      //     roomNumber,
-      //     data,
-      //     type
-      //   });
-      // })
     }
     
     return (
