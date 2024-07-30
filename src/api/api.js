@@ -1,7 +1,7 @@
 import axios from "axios";
 
 const URL_WORK = 'http://10.205.24.14:3010/'
-const URL_HOME = 'http://192.168.0.19:3005/'
+const URL_HOME = 'http://192.168.0.18:3005/'
 const URL_TEST = 'https://nice-cases-grab.loca.lt/'
 
 const instance = axios.create({
